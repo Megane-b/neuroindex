@@ -33,6 +33,65 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
+      # 🪄 ÉTAPE CLÉ : Génère les fichiers manquants (comme podhelper.rb) sur le Mac de GitHub
+      - name: Pre-configure iOS project
+        run: flutter build ios --config-only
+
+      # Compile proprement l'application
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
+      # Création du fichier .ipa pour l'installation manuelle
+      - name: Create IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r neuroindex.ipa Payload/
+
+      # Publication automatique sur GitHub Releases
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "Build ${{ github.run_number }}"
+          files: neuroindex.ipa
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}name: Build iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Cache Flutter pour accélérer les builds
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            ~/.flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'  # ✅ Ta version de Flutter
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Setup Xcode
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcodebuild -license accept
+
       # On laisse Flutter générer les fichiers Pods manquants et compiler proprement
       - name: Build iOS
         run: flutter build ios --release --no-codesign

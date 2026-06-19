@@ -25,15 +25,21 @@ jobs:
           flutter-version: '3.44.2'  # ✅ Ta version de Flutter
           channel: 'stable'
 
-      - name: Install dependencies
-        run: flutter pub get
-
       - name: Setup Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
-      # 🪄 ÉTAPE CLÉ FIXÉE : On ajoute --no-codesign ici aussi
+      # 🪄 NETTOYAGE & RE-GÉNÉRATION : On s'assure que les fichiers iOS sont propres pour Mac
+      - name: Recreate clean iOS platform files
+        run: |
+          rm -rf ios/
+          flutter create --platforms=ios .
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Pré-configuration sans certificat
       - name: Pre-configure iOS project
         run: flutter build ios --config-only --no-codesign
 

@@ -33,9 +33,9 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
-      # 🪄 ÉTAPE CLÉ : Génère les fichiers manquants (comme podhelper.rb) sur le Mac de GitHub
+      # 🪄 ÉTAPE CLÉ FIXÉE : On ajoute --no-codesign ici aussi
       - name: Pre-configure iOS project
-        run: flutter build ios --config-only
+        run: flutter build ios --config-only --no-codesign
 
       # Compile proprement l'application
       - name: Build iOS

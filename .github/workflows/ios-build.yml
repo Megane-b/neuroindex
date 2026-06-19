@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Cache Flutter et CocoaPods pour accélérer les builds
+      # Cache Flutter pour accélérer les builds
       - name: Cache Flutter dependencies
         uses: actions/cache@v3
         with:
@@ -20,41 +20,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-flutter-
 
-      - name: Cache CocoaPods
-        uses: actions/cache@v3
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.2'  # ✅ Version compatible avec Dart 3.12.2
+          flutter-version: '3.44.2'  # ✅ Ta version de Flutter
           channel: 'stable'
 
-      - run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Setup Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
-      - name: Install CocoaPods
-        run: |
-          sudo gem install cocoapods -v 1.14.3
-          cd ios
-          pod install --repo-update
-
+      # On laisse Flutter générer les fichiers Pods manquants et compiler proprement
       - name: Build iOS
         run: flutter build ios --release --no-codesign
 
+      # Création du fichier .ipa pour l'installation manuelle
       - name: Create IPA
         run: |
           mkdir -p Payload
           cp -r build/ios/iphoneos/Runner.app Payload/
           zip -r neuroindex.ipa Payload/
 
+      # Publication automatique sur GitHub Releases
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:

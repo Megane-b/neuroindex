@@ -1,3 +1,14 @@
+# Spécifie le chemin vers le script d'intégration de Flutter
+yaml_path = File.expand_path('../.flutter-plugins-dependencies', __dir__)
+global_utils_path = File.expand_path('../../.flutter-plugins-dependencies', __dir__)
+
+if File.exist?(yaml_path) || File.exist?(global_utils_path)
+  # Version moderne de Flutter
+  load File.join(File.dirname(File.expand_path(__FILE__)), 'Flutter', 'podhelper.rb')
+end
+
+platform :ios, '13.0'
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!

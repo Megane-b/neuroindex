@@ -30,11 +30,14 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
 
-      # 🪄 NETTOYAGE & RE-GÉNÉRATION : On s'assure que les fichiers iOS sont propres pour Mac
+      # 🪄 ENTRAIDE : Génération propre + passage obligatoire à iOS 15.0 pour Firebase
       - name: Recreate clean iOS platform files
         run: |
           rm -rf ios/
           flutter create --platforms=ios .
+          # Ces deux lignes modifient la version cible 13.0 en 15.0 dans les fichiers Xcode
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 13.0/IPHONEOS_DEPLOYMENT_TARGET = 15.0/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/platform :ios, '"'"'13.0'"'"'/platform :ios, '"'"'15.0'"'"'/g' ios/Podfile || true
 
       - name: Install dependencies
         run: flutter pub get

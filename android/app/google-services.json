@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107961647459",
+    "project_id": "neuroindex-e4f5b",
+    "storage_bucket": "neuroindex-e4f5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107961647459:android:abb467d4e85b8ed98b1356",
+        "android_client_info": {
+          "package_name": "com.example.neuroindex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLsFe9UIfI4JSdW7UoJYN34bVW80z0wH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
